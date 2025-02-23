@@ -69,14 +69,50 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	// pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	// {
+	// 	//TODO
+	// 	Self {
+    //         length: 0,
+    //         start: None,
+    //         end: None,
+    //     }
+	// }
+}
+impl<T:Copy+ std::cmp::PartialOrd> LinkedList<T> {
+    pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+		if list_a.length == 0 {
+            return list_b;
         }
+        if list_b.length == 0 {
+            return list_a;
+        }
+        let mut list_c = LinkedList::<T>::new();
+        let mut node_a = list_a.start;
+        let mut node_b = list_b.start;
+        while node_a.is_some() && node_b.is_some() {
+            let v1 = unsafe {(*node_a.unwrap().as_ptr()).val};
+            let v2 = unsafe {(*node_b.unwrap().as_ptr()).val};
+            if v1 < v2 {
+                list_c.add(v1);
+                node_a = unsafe {(*node_a.unwrap().as_ptr()).next};
+            } else {
+                list_c.add(v2);
+                node_b = unsafe {(*node_b.unwrap().as_ptr()).next};
+            }
+        }
+        while node_a.is_some()  {
+            let v1 = unsafe {(*node_a.unwrap().as_ptr()).val};
+            list_c.add(v1);
+            node_a = unsafe {(*node_a.unwrap().as_ptr()).next};
+        }
+        while node_b.is_some()  {
+            let v2 = unsafe {(*node_b.unwrap().as_ptr()).val};
+            list_c.add(v2);
+            node_b = unsafe {(*node_b.unwrap().as_ptr()).next};
+        }
+        list_c
 	}
 }
 
@@ -170,4 +206,8 @@ mod tests {
 			assert_eq!(target_vec[i],*list_c.get(i as i32).unwrap());
 		}
 	}
+}
+
+fn main() {
+
 }

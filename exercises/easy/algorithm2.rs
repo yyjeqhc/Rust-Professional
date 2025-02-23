@@ -72,8 +72,23 @@ impl<T> LinkedList<T> {
             },
         }
     }
+}
+impl<T:Copy> LinkedList<T>{
 	pub fn reverse(&mut self){
-		// TODO
+		if self.length == 0{
+            return;
+        }
+        let mut list_c = LinkedList::<T>::new();
+        let mut node_a = self.end;
+        while node_a.is_some() {
+            let v1 = unsafe {(*node_a.unwrap().as_ptr()).val};
+            // let v1 = std::mem::take(&mut unsafe {(*node_a.unwrap().as_ptr()).val});
+            list_c.add(v1);
+            node_a = unsafe {(*node_a.unwrap().as_ptr()).prev};
+        }
+        self.length = list_c.length;
+        self.start = list_c.start;
+        self.end = list_c.end;
 	}
 }
 

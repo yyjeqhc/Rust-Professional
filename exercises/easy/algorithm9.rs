@@ -37,7 +37,24 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.count += 1;
+        // 确保 items 向量有足够空间
+        if self.count >= self.items.len() {
+            self.items.push(value);
+        } else {
+            self.items[self.count] = value;
+        }
+
+        // 上滤：将新添加的元素调整到正确位置
+        let mut idx = self.count;
+        while idx > 1 {
+            let parent = self.parent_idx(idx);
+            if !(self.comparator)(&self.items[idx], &self.items[parent]) {
+                break; // 满足堆性质，停止
+            }
+            self.items.swap(idx, parent);
+            idx = parent;
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +74,23 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        let left = self.left_child_idx(idx);
+        let right = self.right_child_idx(idx);
+
+        if right > self.count {
+            // 只有左子节点
+            if left > self.count {
+                return 0; // 没有子节点
+            }
+            return left;
+        }
+
+        // 比较左右子节点，返回较小的（或较大的，根据 comparator）
+        if (self.comparator)(&self.items[left], &self.items[right]) {
+            left
+        } else {
+            right
+        }
     }
 }
 
@@ -84,8 +116,31 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.is_empty() {
+            return None;
+        }
+
+        // 获取堆顶元素（最小或最大值）
+        let result = self.items.swap_remove(1); // 移除并返回根节点（索引 1）
+        self.count -= 1;
+
+        if !self.is_empty() {
+            // 下滤：将新根节点调整到正确位置
+            let mut idx = 1;
+            while self.children_present(idx) {
+                let smallest = self.smallest_child_idx(idx);
+                if smallest == 0 {
+                    break; // 没有子节点，停止
+                }
+                if !(self.comparator)(&self.items[smallest], &self.items[idx]) {
+                    break; // 满足堆性质，停止
+                }
+                self.items.swap(idx, smallest);
+                idx = smallest;
+            }
+        }
+
+        Some(result)
     }
 }
 

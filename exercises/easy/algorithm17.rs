@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 /*
     Find Intersection of Two Arrays
     Given two arrays, find the intersection of the arrays and return the elements of the intersection (without duplicates).
@@ -12,8 +13,11 @@
 use std::fmt::{self, Display, Formatter};
 
 pub fn intersection(nums1: Vec<i32>, nums2: Vec<i32>) -> Vec<i32> {
-    // TODO: Implement the logic to find the intersection of two arrays
-    Vec::new() // Placeholder return value
+    let a:HashSet<_> = nums1.into_iter().collect();
+    let b:HashSet<_> = nums2.into_iter().collect();
+    
+    let intersection: Vec<i32> = a.intersection(&b).map(|v|*v).collect();
+    intersection
 }
 
 #[cfg(test)]

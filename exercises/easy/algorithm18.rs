@@ -13,9 +13,31 @@
 
 use std::fmt::{self, Display, Formatter};
 
+pub fn pre_sort(mut intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+    intervals.sort_by(|a, b| a[0].cmp(&b[0])); // 根据第一列排序
+    intervals
+    
+}
 pub fn merge_intervals(intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
     // TODO: Implement the logic to merge overlapping intervals
-    Vec::new() // Placeholder return value
+    let intervals = pre_sort(intervals);
+    let mut res = Vec::new();
+    let mut tmp = intervals[0].clone();
+    // let mut push = true;
+    for i in 1..intervals.len() {
+        if tmp[1] >= intervals[i][0] {
+            if tmp[1] < intervals[i][1] {
+                tmp[1] = intervals[i][1];
+            }
+        } else {
+            res.push(tmp.clone());
+            tmp = intervals[i].clone();
+        }
+        if i==intervals.len()-1 {
+                res.push(tmp.clone());
+        }
+    }
+    res
 }
 
 #[cfg(test)]

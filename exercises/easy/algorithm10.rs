@@ -29,7 +29,26 @@ impl Graph for UndirectedGraph {
         &self.adjacency_table
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
-        //TODO
+        let (from, to, weight) = edge;
+        let from_str = String::from(from);
+        let to_str = String::from(to);
+
+        // 确保节点存在
+        if !self.contains(from) {
+            self.add_node(from);
+        }
+        if !self.contains(to) {
+            self.add_node(to);
+        }
+
+        // 在无向图中添加双向边
+        let table = self.adjacency_table_mutable();
+        table.entry(from_str.clone())
+            .or_insert_with(Vec::new)
+            .push((to_str.clone(), weight));
+        table.entry(to_str)
+            .or_insert_with(Vec::new)
+            .push((from_str, weight));
     }
 }
 pub trait Graph {
