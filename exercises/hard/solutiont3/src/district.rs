@@ -46,44 +46,44 @@ struct Config {
 //     config
 // }
 
-fn load_config_json() -> Config {
-    let config_content = fs::read_to_string("district.json").expect("Unable to read config file");
-    let raw_data: Value = serde_json::from_str(&config_content).expect("Unable to parse config file");
-    println!("{:?}",raw_data);
-    let servers = if let Value::Object(map) = raw_data {
-        map.into_iter()
-            .map(|(_key, value)| {
-                let mut upstream = Vec::new();
-                if let Value::Object(inner_map) = value {
-                    for (key, neighbors) in inner_map {
-                        if let Value::Array(arr) = neighbors {
-                            let mut set = HashSet::new();
-                            set.insert(key);
-                            for v in arr {
-                                if let Value::String(s) = v {
-                                    set.insert(s);
-                                }
-                            }
-                            upstream.push(set);
-                        }
-                    }
-                }
-                ServerConfig { upstream }
-            })
-            .collect()
-    } else {
-        Vec::new()
-    };
+// fn load_config_json() -> Config {
+//     let config_content = fs::read_to_string("district.json").expect("Unable to read config file");
+//     let raw_data: Value = serde_json::from_str(&config_content).expect("Unable to parse config file");
+//     println!("{:?}",raw_data);
+//     let servers = if let Value::Object(map) = raw_data {
+//         map.into_iter()
+//             .map(|(_key, value)| {
+//                 let mut upstream = Vec::new();
+//                 if let Value::Object(inner_map) = value {
+//                     for (key, neighbors) in inner_map {
+//                         if let Value::Array(arr) = neighbors {
+//                             let mut set = HashSet::new();
+//                             set.insert(key);
+//                             for v in arr {
+//                                 if let Value::String(s) = v {
+//                                     set.insert(s);
+//                                 }
+//                             }
+//                             upstream.push(set);
+//                         }
+//                     }
+//                 }
+//                 ServerConfig { upstream }
+//             })
+//             .collect()
+//     } else {
+//         Vec::new()
+//     };
 
-    Config { servers }
-}
+//     Config { servers }
+// }
 
-fn save_config_as_json(config: &Config) {
-    // 将 Config 序列化为 JSON 字符串
-    let json_string = serde_json::to_string_pretty(config).expect("Failed to serialize config");
-    // 将 JSON 字符串写入文件
-    fs::write("config.json", json_string).expect("Unable to write config file");
-}
+// fn save_config_as_json(config: &Config) {
+//     // 将 Config 序列化为 JSON 字符串
+//     let json_string = serde_json::to_string_pretty(config).expect("Failed to serialize config");
+//     // 将 JSON 字符串写入文件
+//     fs::write("config.json", json_string).expect("Unable to write config file");
+// }
 fn parse_config(content: &str) -> Config {
     let mut servers = Vec::new();
     let mut current_group = Vec::new();
